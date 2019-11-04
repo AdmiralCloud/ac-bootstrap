@@ -1,6 +1,6 @@
 {
   "name": "@ac-bootstrap/redis",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "IAM Server for AdmiralCloud",
   "repository": {
     "type": "git",
@@ -13,5 +13,5 @@
     "ioredis": "^4.14.2",
     "lodash": "^4.17.15"
   },
-  "gitHead": "a9fde3ef609a3024995b6a2875e663b7bd93fd83"
+  "gitHead": "db47b15509769bf1acd03592269eea4c52b16291"
 }

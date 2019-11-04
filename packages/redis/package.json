@@ -1,5 +1,5 @@
 {
-  "name": "ac-bootstrap/redis",
+  "name": "@mmpro/ac-bootstrap-redis",
   "version": "0.0.6",
   "description": "IAM Server for AdmiralCloud",
   "repository": "https://github.com/mmpro/ac-bootstrap/tree/master/packages/redis",

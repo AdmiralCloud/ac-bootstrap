@@ -2,11 +2,12 @@
   "name": "@ac-bootstrap/redis",
   "version": "0.0.2",
   "description": "IAM Server for AdmiralCloud",
-  "main": "server.js",
-  "repository": "ac-iam-server",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
   "author": "Mark Poepping <mark.poepping@mmpro.de>",
   "license": "MIT",
-  "private": true,
   "dependencies": {
     "async": "^3.1.0",
     "ioredis": "^4.14.2",

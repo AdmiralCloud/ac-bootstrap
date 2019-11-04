@@ -1,12 +1,10 @@
 {
   "name": "ac-bootstrap",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "AdmiralCloud bootstrap helper",
-  "main": "index.js",
   "repository": "https://github.com/mmpro/ac-bootstrap",
   "author": "Mark Poepping",
   "license": "MIT",
-  "private": true,
   "devDependencies": {
     "eslint": "^6.6.0"
   }

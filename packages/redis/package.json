@@ -2,10 +2,7 @@
   "name": "@ac-bootstrap/redis",
   "version": "0.0.6",
   "description": "IAM Server for AdmiralCloud",
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
+  "repository": "https://github.com/mmpro/ac-bootstrap/tree/master/packages/redis",
   "author": "Mark Poepping <mark.poepping@mmpro.de>",
   "license": "MIT",
   "dependencies": {
@@ -16,5 +13,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "0965eb308aded562997b87bee733cf3cc31ec25d"
+  "gitHead": "481ea4e9046a5c3e699e0d45b167568bc47b5877"
 }

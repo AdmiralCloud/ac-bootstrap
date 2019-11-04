@@ -1,5 +1,5 @@
 {
-  "name": "@ac-bootstrap/redis",
+  "name": "ac-bootstrap/redis",
   "version": "0.0.6",
   "description": "IAM Server for AdmiralCloud",
   "repository": "https://github.com/mmpro/ac-bootstrap/tree/master/packages/redis",
@@ -13,5 +13,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "481ea4e9046a5c3e699e0d45b167568bc47b5877"
+  "gitHead": "13a992c622ddcb9d9f9d867fa4ddfb13930817b0"
 }

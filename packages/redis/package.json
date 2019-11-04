@@ -13,5 +13,8 @@
     "ioredis": "^4.14.2",
     "lodash": "^4.17.15"
   },
-  "gitHead": "db47b15509769bf1acd03592269eea4c52b16291"
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "763a17f258a38a4c00f475466c4b565bd5bdca1b"
 }

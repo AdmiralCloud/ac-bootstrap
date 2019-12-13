@@ -1,7 +1,7 @@
 {
   "name": "@mmpro/ac-bootstrap-redis",
-  "version": "0.0.7",
-  "description": "IAM Server for AdmiralCloud",
+  "version": "0.0.8",
+  "description": "Redis init for AC apps",
   "repository": "https://github.com/mmpro/ac-bootstrap/tree/master/packages/redis",
   "author": "Mark Poepping <mark.poepping@mmpro.de>",
   "license": "MIT",

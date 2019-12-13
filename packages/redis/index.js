@@ -61,6 +61,7 @@ module.exports = (acapi, options, cb) => {
       })
 
       // flush redis in testmode
+      if (!_.get(options, 'flushInTestmode')) return itDone()
       acapi.redis[name].flushdb((err) => {
         acapi.log.info('%s: %s', _.padEnd('Flushed', padLength), '\x1b[32mSuccessful\x1b[0m')
         return itDone(err)

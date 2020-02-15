@@ -1,6 +1,6 @@
 {
   "name": "@mmpro/ac-bootstrap-mysql",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Mysql init for AC apps",
   "repository": "https://github.com/mmpro/ac-bootstrap/tree/master/packages/mysql",
   "author": "Mark Poepping <mark.poepping@mmpro.de>",

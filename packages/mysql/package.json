@@ -1,0 +1,16 @@
+{
+  "name": "@mmpro/ac-bootstrap-mysql",
+  "version": "0.0.1",
+  "description": "Mysql init for AC apps",
+  "repository": "https://github.com/mmpro/ac-bootstrap/tree/master/packages/mysql",
+  "author": "Mark Poepping <mark.poepping@mmpro.de>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^3.1.0",
+    "lodash": "^4.17.15",
+    "mysql": "^2.18.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

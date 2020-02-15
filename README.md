@@ -1,4 +1,5 @@
 #AC-Bootstrap
 Helper to use for bootstrapping applications
 
-TBC
+# Publish
+Publish new version from root with lerna publish

@@ -115,7 +115,7 @@ module.exports = function(acapi) {
       acapi.log.warn('%s | %s | Job has no identifier %j', functionName, functionIdentifier, params)    
     }
     const addToWatchList = _.get(acapi.config, 'bull.jobListWatchKey') && _.get(params, 'addToWatchList', true)
-    const jobListWatchKey = _.get(acapi.config, 'bull.jobListWatchKey') + (acapi.config.localDevelopment ? '1:' : '') + identifierId
+    const jobListWatchKey = _.get(acapi.config, 'bull.jobListWatchKey') + (acapi.config.localDevelopment ? '1' : '') + (identifierId ? ':' + identifierId : '')
 
     if (!acapi.bull[queueName]) return cb({ message: 'bullNotAvailableForQueueName', additionalInfo: { queueName } })
     //acapi.log.error('195 %j %j %j %j %j', queueName, name, jobPayload, jobOptions, addToWatchList)
@@ -141,7 +141,7 @@ module.exports = function(acapi) {
         }
       },
       addKeyToWatchList: (done) => {
-        if (!addToWatchList || !_.isFunction(acapi.redis[_.get(acapi.config, 'bull.redis.database.name')])) return done()
+        if (!addToWatchList || !_.isObject(acapi.redis[_.get(acapi.config, 'bull.redis.database.name')])) return done()
         const redisKey = acapi.config.environment + jobListWatchKey
         acapi.redis[_.get(acapi.config, 'bull.redis.database.name')].hset(redisKey, jobId, queueName, done)
       }

@@ -1,6 +1,9 @@
 const Queue = require('bull')
 const _ = require('lodash')
 const Redis = require('ioredis')
+const async = require('async')
+
+const functionName = _.padEnd('AC-Bull', 10)
 
 module.exports = function(acapi) {
 

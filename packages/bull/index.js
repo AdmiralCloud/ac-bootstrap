@@ -115,8 +115,11 @@ module.exports = function(acapi) {
       acapi.log.warn('%s | %s | Job has no identifier %j', functionName, functionIdentifier, params)    
     }
     const addToWatchList = _.get(acapi.config, 'bull.jobListWatchKey') && _.get(params, 'addToWatchList', true)
-    const jobListWatchKey = _.get(acapi.config, 'bull.jobListWatchKey') + (acapi.config.localDevelopment ? '1' : '') + (identifierId ? ':' + identifierId : '')
-
+    const watchKeyParts = []
+    if (acapi.config.localDevelopment) watchKeyParts.push('1')
+    if (identifierId) watchKeyParts.push(identifierId)
+    const jobListWatchKey = _.get(acapi.config, 'bull.jobListWatchKey') + _.join(watchKeyParts, ':')
+    
     if (!acapi.bull[queueName]) return cb({ message: 'bullNotAvailableForQueueName', additionalInfo: { queueName } })
     //acapi.log.error('195 %j %j %j %j %j', queueName, name, jobPayload, jobOptions, addToWatchList)
 

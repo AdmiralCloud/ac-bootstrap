@@ -18,8 +18,8 @@ module.exports = function(acapi) {
 
   const prepareQueue =  (params) => {
     const jobList = _.get(params, 'jobList')
-    const type = _.get(params, 'type', 'bull')
-    const jobListConfig = _.find(_.get(acapi.config, type + '.jobLists'), { jobList }) 
+    const configPath = _.get(params, 'configPath', 'bull')
+    const jobListConfig = _.find(_.get(acapi.config, configPath + '.jobLists'), { jobList }) 
     if (!jobListConfig) return false
 
     const queueName = _.get(params, 'customJobList.environment', (acapi.config.environment + (acapi.config.localDevelopment ? '1' : ''))) + '.' + jobList
@@ -93,13 +93,12 @@ module.exports = function(acapi) {
    *
    * @param jobList STRING The jobList to use (bull queue)
    * @param params OBJ Job Parameters
-   * @param params.type STRING type of the job - is required, as the client uses it!
    * @param params.addToWatchList BOOL If true (default) add key to customer watch list
    *
    */
 
  const addJob = function(jobList, params, cb) {
-    const { queueName } = this.prepareQueue({ jobList, type: _.get(params, 'type'), customJobList: _.get(params, 'customJobList') })
+    const { queueName } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath'), customJobList: _.get(params, 'customJobList') })
     if (!queueName) return cb({ message: 'jobListNotDefined', additionalInfo: { jobList } })
     const functionIdentifier = _.padEnd('addJob', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
 

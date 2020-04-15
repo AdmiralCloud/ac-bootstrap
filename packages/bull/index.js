@@ -22,7 +22,7 @@ module.exports = function(acapi) {
     const jobListConfig = _.find(_.get(acapi.config, configPath + '.jobLists'), { jobList }) 
     if (!jobListConfig) return false
 
-    const queueName = _.get(params, 'customJobList.environment', (acapi.config.environment + (acapi.config.localDevelopment ? '1' : ''))) + '.' + jobList
+    const queueName = _.get(params, 'customJobList.environment', (acapi.config.environment + (acapi.config.localDevelopment ? acapi.config.localDevelopment : ''))) + '.' + jobList
     return { queueName, jobListConfig }
   }
 
@@ -116,7 +116,7 @@ module.exports = function(acapi) {
     }
     const addToWatchList = _.get(acapi.config, 'bull.jobListWatchKey') && _.get(params, 'addToWatchList', true)
     const watchKeyParts = []
-    if (acapi.config.localDevelopment) watchKeyParts.push('1')
+    if (acapi.config.localDevelopment) watchKeyParts.push(acapi.config.localDevelopment)
     if (identifierId) watchKeyParts.push(identifierId)
     const jobListWatchKey = _.get(acapi.config, 'bull.jobListWatchKey') + _.join(watchKeyParts, ':')
     

@@ -4,9 +4,15 @@ const _ = require('lodash')
 const { Client, Connection } = require('@elastic/elasticsearch')
 const AWS = require('aws-sdk')
 
+/**
+ * 
+ * @param options.providerConfigType STRING OPTIONAL - set type of aws accessKeys, defaults to secrets
+ * @param options.createMapping FUNCTION OPTION - function to call if you want to rebuild ES indices during test
+ **/
+
 module.exports = (acapi, options, cb) => {
   const headlineLength = _.get(acapi.config, 'headlineLength', 60)
-  const providerConfig = _.find(_.get(acapi.config, 'aws.accessKeys'), { default: true, type: 'maintenance' })
+  const providerConfig = _.find(_.get(acapi.config, 'aws.accessKeys'), { default: true, type: _.get(options, 'providerConfigType', 'secrets') })
 
 
   acapi.log.info('')

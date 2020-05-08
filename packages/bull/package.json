@@ -6,6 +6,7 @@
   "author": "Mark Poepping <mark.poepping@mmpro.de>",
   "license": "MIT",
   "dependencies": {
+    "ac-redislock": "^1.0.6",
     "async": "^3.1.0",
     "bull": "^3.13.0",
     "ioredis": "^4.16.0",

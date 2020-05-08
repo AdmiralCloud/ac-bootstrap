@@ -2,6 +2,7 @@ const Queue = require('bull')
 const _ = require('lodash')
 const Redis = require('ioredis')
 const async = require('async')
+const redisLock = require('ac-redislock')
 
 const functionName = _.padEnd('AC-Bull', 10)
 
@@ -153,12 +154,75 @@ module.exports = function(acapi) {
     })
   }
 
+  const removeJob = (job, queueName) => {
+    const functionIdentifier = _.padEnd('removeJob', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
+
+    const jobId = _.get(job, 'id')
+    const customerId = _.get(job, 'data.customerId')
+
+    async.series({
+      removeKeyFromWatchList: (done) => {
+        if (!customerId || !_.isObject(acapi.redis[_.get(acapi.config, 'bull.redis.database.name')])) return done()
+        
+        const watchKeyParts = []
+        if (acapi.config.localDevelopment) watchKeyParts.push(acapi.config.localDevelopment)
+        watchKeyParts.push(customerId)
+        const jobListWatchKey = _.get(acapi.config, 'bull.jobListWatchKey') + _.join(watchKeyParts, ':')
+    
+        const redisKey = acapi.config.environment + jobListWatchKey
+        acapi.redis[_.get(acapi.config, 'bull.redis.database.name')].hdel(redisKey, jobId, done)
+      },
+      removeJob: (done) => {
+        job.remove()
+        return done()
+      }
+    }, function allDone(err) {
+      if (err) acapi.log.error('%s | %s | %s | %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
+      else acapi.log.info('%s | %s | %s | # %s | Successful', functionName, functionIdentifier, queueName, jobId)
+    })
+  }
+
+  const prepareProcessing = (params, cb) => {
+    const functionIdentifier = _.padEnd('prepareProcessing', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
+    const jobList = _.get(params, 'jobList') 
+    const jobId = _.get(params, 'jobId')
+
+    const redisKey = acapi.config.environment + ':bull:' + _.get(jobList, 'jobList') + ':' + jobId + ':complete:lock'
+    const { queueName, jobListConfig } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath') })
+    if (!queueName) return cb({ message: 'queueNameMissing', additionalInfo: params })
+
+    let job
+    async.series({
+      lockKey: (done) => {
+        redisLock.lockKey({ redisKey }, done)
+      },
+      fetchJob: (done) => {
+        acapi.bull[queueName].getJob(jobId).then((result) => {
+          job = result
+          acapi.log.info('%s | %s | %s | # %s | Prepare jobResult processing | C/MC %s/%s', functionName, functionIdentifier, queueName, jobId, _.get(job, 'data.customerId', '-'), _.get(job, 'data.mediaContainerId', '-'))
+          setTimeout(BullHelper.removeBullJob, _.get(jobListConfig, 'retentionTime', _.get(acapi.config, 'bull.retentionTime', 60)), job, queueName)
+          return done()
+        }).catch(err => {
+          acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
+          return done()
+        })
+      }
+    }, (err) => {
+      if (err === 900) err = null
+      if (_.isFunction(cb)) return cb(err, job)
+      if (err && _.indexOf([423, 900], err) < 0) acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
+      else acapi.log.info('%s | %s | %s | # %s | Successful', functionName, functionIdentifier, queueName, jobId)
+    })
+  }
+
   return {
     init,
     scope,
     prepareQueue,
     handleFailedJobs,
-    addJob
+    prepareProcessing,
+    addJob,
+    removeJob
   }
 
 }

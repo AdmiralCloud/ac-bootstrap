@@ -182,10 +182,11 @@ module.exports = function(acapi) {
     })
   }
 
-  const prepareProcessing = (params, cb) => {
+  const prepareProcessing = function(params, cb) {
     const functionIdentifier = _.padEnd('prepareProcessing', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
     const jobList = _.get(params, 'jobList') 
     const jobId = _.get(params, 'jobId')
+    const that = this
 
     const redisKey = acapi.config.environment + ':bull:' + _.get(jobList, 'jobList') + ':' + jobId + ':complete:lock'
     const { queueName, jobListConfig } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath') })
@@ -200,7 +201,7 @@ module.exports = function(acapi) {
         acapi.bull[queueName].getJob(jobId).then((result) => {
           job = result
           acapi.log.info('%s | %s | %s | # %s | Prepare jobResult processing | C/MC %s/%s', functionName, functionIdentifier, queueName, jobId, _.get(job, 'data.customerId', '-'), _.get(job, 'data.mediaContainerId', '-'))
-          setTimeout(BullHelper.removeBullJob, _.get(jobListConfig, 'retentionTime', _.get(acapi.config, 'bull.retentionTime', 60)), job, queueName)
+          setTimeout(that.removeBullJob, _.get(jobListConfig, 'retentionTime', _.get(acapi.config, 'bull.retentionTime', 60)), job, queueName)
           return done()
         }).catch(err => {
           acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)

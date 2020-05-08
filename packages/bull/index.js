@@ -99,9 +99,9 @@ module.exports = function(acapi) {
    */
 
  const addJob = function(jobList, params, cb) {
-    const { queueName } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath'), customJobList: _.get(params, 'customJobList') })
+  const functionIdentifier = _.padEnd('addJob', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
+  const { queueName } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath'), customJobList: _.get(params, 'customJobList') })
     if (!queueName) return cb({ message: 'jobListNotDefined', additionalInfo: { jobList } })
-    const functionIdentifier = _.padEnd('addJob', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
 
     const name = _.get(params, 'name') // named job
     const jobPayload = _.get(params, 'jobPayload')
@@ -156,7 +156,6 @@ module.exports = function(acapi) {
 
   const removeJob = (job, queueName) => {
     const functionIdentifier = _.padEnd('removeJob', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
-
     const jobId = _.get(job, 'id')
     const customerId = _.get(job, 'data.customerId')
 

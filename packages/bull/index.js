@@ -190,8 +190,8 @@ module.exports = function(acapi) {
     const redisKey = acapi.config.environment + ':bull:' + _.get(jobList, 'jobList') + ':' + jobId + ':complete:lock'
     const { queueName, jobListConfig } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath') })
     if (!queueName) return cb({ message: 'queueNameMissing', additionalInfo: params })
-    const retentionTime = _.get(jobListConfig, 'retentionTime', _.get(acapi.config, 'bull.retentionTime', 60)) * 1000
-
+    const retentionTime = _.get(jobListConfig, 'retentionTime', _.get(acapi.config, 'bull.retentionTime', 60000))
+    
     redisLock.lockKey({ redisKey }, err => {
       if (err === 423) {
         acapi.log.debug('%s | %s | %s | # %s | Already processing', functionName, functionIdentifier, queueName, jobId)

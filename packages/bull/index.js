@@ -4,9 +4,9 @@ const Redis = require('ioredis')
 const async = require('async')
 const redisLock = require('ac-redislock')
 
-const functionName = _.padEnd('AC-Bull', 10)
 
 module.exports = function(acapi) {
+  const functionName = _.padEnd('AC-Bull', _.get(acapi.config, 'bull.log.functionNameLength'))
 
   const scope = (params) => {
     _.set(acapi.config, 'bull.redis.database.name', _.get(params, 'redis.config', 'jobProcessing'))
@@ -195,19 +195,20 @@ module.exports = function(acapi) {
     redisLock.lockKey({ redisKey }, err => {
       if (err === 423) {
         acapi.log.debug('%s | %s | %s | # %s | Already processing', functionName, functionIdentifier, queueName, jobId)
-        return cb()
+        if (_.isFunction(cb)) return cb()
       }
       if (err) {
         acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
-        return cb(err)     
+        if (_.isFunction(cb)) return cb(err)     
       }
       acapi.bull[queueName].getJob(jobId).then((result) => {
-        acapi.log.info('%s | %s | %s | # %s | Prepare jobResult processing | C/MC %s/%s', functionName, functionIdentifier, queueName, jobId, _.get(result, 'data.customerId', '-'), _.get(result, 'data.mediaContainerId', '-'))
+        acapi.log.info('%s | %s | %s | # %s | C/MC %s/%s', functionName, functionIdentifier, queueName, jobId, _.get(result, 'data.customerId', '-'), _.get(result, 'data.mediaContainerId', '-'))
         setTimeout(that.removeJob, retentionTime, result, queueName)
-        return cb(null, result)
+        if (_.isFunction(cb)) return cb(null, result)
+        acapi.log.info('%s | %s | %s | # %s | Successful', functionName, functionIdentifier, queueName, jobId, _.get(result, 'data.customerId', '-'), _.get(result, 'data.mediaContainerId', '-'))
       }).catch(err => {
         acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
-        return cb()
+        if (_.isFunction(cb)) return cb()
       })
     })
   }

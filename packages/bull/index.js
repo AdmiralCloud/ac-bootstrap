@@ -190,28 +190,25 @@ module.exports = function(acapi) {
     const redisKey = acapi.config.environment + ':bull:' + _.get(jobList, 'jobList') + ':' + jobId + ':complete:lock'
     const { queueName, jobListConfig } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath') })
     if (!queueName) return cb({ message: 'queueNameMissing', additionalInfo: params })
+    const retentionTime = _.get(jobListConfig, 'retentionTime', _.get(acapi.config, 'bull.retentionTime', 60)) * 1000
 
-    let job
-    async.series({
-      lockKey: (done) => {
-        redisLock.lockKey({ redisKey }, done)
-      },
-      fetchJob: (done) => {
-        acapi.bull[queueName].getJob(jobId).then((result) => {
-          job = result
-          acapi.log.info('%s | %s | %s | # %s | Prepare jobResult processing | C/MC %s/%s', functionName, functionIdentifier, queueName, jobId, _.get(job, 'data.customerId', '-'), _.get(job, 'data.mediaContainerId', '-'))
-          setTimeout(that.removeBullJob, _.get(jobListConfig, 'retentionTime', _.get(acapi.config, 'bull.retentionTime', 60)), job, queueName)
-          return done()
-        }).catch(err => {
-          acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
-          return done()
-        })
+    redisLock.lockKey({ redisKey }, err => {
+      if (err === 423) {
+        acapi.log.debug('%s | %s | %s | # %s | Already processing', functionName, functionIdentifier, queueName, jobId)
+        return cb()
       }
-    }, (err) => {
-      if (err === 900) err = null
-      if (_.isFunction(cb)) return cb(err, job)
-      if (err && _.indexOf([423, 900], err) < 0) acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
-      else acapi.log.info('%s | %s | %s | # %s | Successful', functionName, functionIdentifier, queueName, jobId)
+      if (err) {
+        acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
+        return cb(err)     
+      }
+      acapi.bull[queueName].getJob(jobId).then((result) => {
+        acapi.log.info('%s | %s | %s | # %s | Prepare jobResult processing | C/MC %s/%s', functionName, functionIdentifier, queueName, jobId, _.get(result, 'data.customerId', '-'), _.get(result, 'data.mediaContainerId', '-'))
+        setTimeout(that.removeJob, retentionTime, result, queueName)
+        return cb(null, result)
+      }).catch(err => {
+        acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)
+        return cb()
+      })
     })
   }
 

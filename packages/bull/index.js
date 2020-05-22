@@ -43,7 +43,7 @@ module.exports = function(acapi) {
       db: _.get(redisConfig, 'db', 3)
     }
 
-    acapi.aclog.serverInfo(redisConfig)
+    acapi.aclog.serverInfo(redisConf)
 
     const opts = {
       createClient: (type) => {
@@ -123,6 +123,7 @@ module.exports = function(acapi) {
     
     if (!acapi.bull[queueName]) return cb({ message: 'bullNotAvailableForQueueName', additionalInfo: { queueName } })
     //acapi.log.error('195 %j %j %j %j %j', queueName, name, jobPayload, jobOptions, addToWatchList)
+    if (_.get(params, 'debug')) acapi.log.info('%s | Adding job to queue', queueName)
 
     let jobId
     async.series({
@@ -195,7 +196,7 @@ module.exports = function(acapi) {
     redisLock.lockKey({ redisKey }, err => {
       if (err === 423) {
         acapi.log.debug('%s | %s | %s | # %s | Already processing', functionName, functionIdentifier, queueName, jobId)
-        if (_.isFunction(cb)) return cb()
+        if (_.isFunction(cb)) return cb(423)
       }
       if (err) {
         acapi.log.error('%s | %s | %s | # %s | Failed %j', functionName, functionIdentifier, queueName, jobId, err)

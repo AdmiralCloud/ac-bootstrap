@@ -73,7 +73,8 @@ module.exports = function(acapi) {
         }
         if (_.get(jobList, 'worker')) {
           // this job's worker is on this API (BatchProcessCollector[jobList])
-          _.get(params, 'worker')[_.get(jobList, 'jobList')]()
+          let workerFN = _.get(params, 'worker')[_.get(jobList, 'jobList')]
+          workerFN(jobList)
           acapi.aclog.listing({ field: '', value: 'Worker activated' })
         }
         if (_.get(jobList, 'autoClean')) {

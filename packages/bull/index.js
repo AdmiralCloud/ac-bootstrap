@@ -114,7 +114,7 @@ module.exports = function(acapi) {
     const identifier = _.get(params, 'identifier') // e.g. customerId
     const identifierId = _.get(jobPayload, identifier)
     if (!identifierId) {
-      acapi.log.warn('%s | %s | Job has no identifier %j', functionName, functionIdentifier, params)    
+      acapi.log.warn('%s | %s | %s | Job has no identifier %j', functionName, functionIdentifier, queueName, params)    
     }
     const addToWatchList = _.get(acapi.config, 'bull.jobListWatchKey') && _.get(params, 'addToWatchList', true)
     const watchKeyParts = []
@@ -124,7 +124,7 @@ module.exports = function(acapi) {
     
     if (!acapi.bull[queueName]) return cb({ message: 'bullNotAvailableForQueueName', additionalInfo: { queueName } })
     //acapi.log.error('195 %j %j %j %j %j', queueName, name, jobPayload, jobOptions, addToWatchList)
-    if (_.get(params, 'debug')) acapi.log.info('%s | Adding job to queue', queueName)
+    if (_.get(params, 'debug')) acapi.log.info('%s | %s | %s | Adding job to queue', functionName, functionIdentifier, queueName)
 
     let jobId
     async.series({
@@ -134,7 +134,7 @@ module.exports = function(acapi) {
             jobId = _.get(job, 'id')
             return done()
           }).catch(err => {
-            acapi.log.error('% s | Name %s | Adding job failed %j', queueName, name, err)
+            acapi.log.error('%s | %s | %s | Name %s | Adding job failed %j', functionName, functionIdentifier, queueName, name, err)
           })
         }
         else {
@@ -142,7 +142,7 @@ module.exports = function(acapi) {
             jobId = _.get(job, 'id')
             return done()
           }).catch(err => {
-            acapi.log.error('% s | Adding job failed %j', queueName, err)
+            acapi.log.error('%s | %s | %s | Adding job failed %j', functionName, functionIdentifier, queueName, err)
           })
         }
       },

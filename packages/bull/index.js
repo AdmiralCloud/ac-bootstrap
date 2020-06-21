@@ -68,7 +68,7 @@ module.exports = function(acapi) {
         if (_.get(jobList, 'listening')) {
           // this job's listener is on this API
           acapi.bull[queueName].on('global:completed', _.get(params, 'handlers.global:completed')[_.get(jobList, 'jobList')])
-          acapi.bull[queueName].on('global:failed', this.handleFailedJobs.bind(this, queueName))  
+          acapi.bull[queueName].on('global:failed', _.get(params, 'handlers.global:failed', this.handleFailedJobs).bind(this, queueName))  
           acapi.aclog.listing({ field: '', value: 'Listener activated' })
         }
         if (_.get(jobList, 'worker')) {
@@ -99,9 +99,9 @@ module.exports = function(acapi) {
    *
    */
 
- const addJob = function(jobList, params, cb) {
-  const functionIdentifier = _.padEnd('addJob', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
-  const { queueName } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath'), customJobList: _.get(params, 'customJobList') })
+  const addJob = function(jobList, params, cb) {
+    const functionIdentifier = _.padEnd('addJob', _.get(acapi.config, 'bull.log.functionIdentifierLength'))
+    const { queueName } = this.prepareQueue({ jobList, configPath: _.get(params, 'configPath'), customJobList: _.get(params, 'customJobList') })
     if (!queueName) return cb({ message: 'jobListNotDefined', additionalInfo: { jobList } })
 
     const name = _.get(params, 'name') // named job

@@ -124,7 +124,6 @@ module.exports = function(acapi) {
     
     if (!acapi.bull[queueName]) return cb({ message: 'bullNotAvailableForQueueName', additionalInfo: { queueName } })
     //acapi.log.error('195 %j %j %j %j %j', queueName, name, jobPayload, jobOptions, addToWatchList)
-    if (_.get(params, 'debug')) acapi.log.info('%s | %s | %s | Adding job to queue', functionName, functionIdentifier, queueName)
 
     let jobId
     async.series({
@@ -152,6 +151,7 @@ module.exports = function(acapi) {
         acapi.redis[_.get(acapi.config, 'bull.redis.database.name')].hset(redisKey, jobId, queueName, done)
       }
     }, (err) => {
+      if (_.get(params, 'debug')) acapi.log.info('%s | %s | %s | %s | Adding job to queue', functionName, functionIdentifier, queueName, jobId)
       return cb(err, { jobId })
     })
   }

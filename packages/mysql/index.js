@@ -32,7 +32,9 @@ module.exports = (acapi, options, cb) => {
     
     let connection = _.pick(db, ['host', 'user', 'password', 'database', 'timezone', 'ssl'])
     if (acapi.config.localDatabase) {
-      _.set(connection, 'port', _.get(acapi.config, 'localDatabase.port'))
+      _.forOwn(acapi.config.localDatabase, (val, key) => {
+        _.set(connection, key, val)
+      })
     }
     acapi.mysql[_.get(db, 'server')] = mysql.createPool(_.merge(connection, {
       multipleStatements: true,

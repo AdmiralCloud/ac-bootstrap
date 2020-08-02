@@ -12,6 +12,8 @@ module.exports = function(acapi) {
     _.set(acapi.config, 'bull.redis.database.name', _.get(params, 'redis.config', 'jobProcessing'))
   }
 
+  const jobLists = []
+
     /**
    * Ingests the job list and return the queue name for the environment. ALways use when preparing/using the name.
    * @param jobList STRING name of the list
@@ -62,6 +64,7 @@ module.exports = function(acapi) {
     _.forEach(_.get(params, 'jobLists'), jobList => {
       const { queueName } = this.prepareQueue(jobList)
       acapi.aclog.listing({ field: 'Queue', value: queueName })
+      this.jobLists.push(queueName)
 
       acapi.bull[queueName] = new Queue(queueName, opts)
       if (_.get(params, 'activateListeners')) {
@@ -215,14 +218,25 @@ module.exports = function(acapi) {
     })
   }
 
+  /**
+   * Shutdown all queues/redis connections
+   */
+  const shutdown = function(cb) {
+    async.each(this.jobLists, (queueName, itDone) => {
+      acapi.bull[queueName].close().then(itDone)
+    }, cb)
+  }
+
   return {
     init,
     scope,
+    jobLists,
     prepareQueue,
     handleFailedJobs,
     prepareProcessing,
     addJob,
-    removeJob
+    removeJob,
+    shutdown
   }
 
 }

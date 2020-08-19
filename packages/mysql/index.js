@@ -30,7 +30,7 @@ module.exports = (acapi, options, cb) => {
   async.eachSeries(_.get(acapi.config, 'database.servers'), (db, itDone) => {
     if (_.get(db, 'ignoreBootstrap')) return itDone()
     
-    let connection = _.pick(db, ['host', 'user', 'password', 'database', 'timezone', 'ssl'])
+    let connection = _.pick(db, ['host', 'user', 'password', 'database', 'timezone', 'ssl', 'socketPath'])
     if (acapi.config.localDatabase) {
       _.forOwn(acapi.config.localDatabase, (val, key) => {
         _.set(connection, key, val)

@@ -115,8 +115,12 @@ module.exports = (acapi, options, cb) => {
     let esData = {}
     async.series({
       checkVersion: (done) => {
-        acapi.elasticSearch[instance].info((err, result) => {
-          if (err) return done(err)
+        acapi.elasticSearch[instance].cluster.stats((err, result) => {
+          if (err) {
+            acapi.log.error('ES | Method %s | Path %s', _.get(err, 'meta.meta.request.params.method'), _.get(err, 'meta.meta.request.params.path'))
+            acapi.log.error('ES | Error %j', _.get(err, 'meta.body'))   
+            return done(err)
+          }
           _.merge(esData, _.get(result, 'body'))
           return done()
         })

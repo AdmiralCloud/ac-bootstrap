@@ -1,6 +1,6 @@
 {
   "name": "@mmpro/ac-bootstrap-elasticsearch",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Elasticsearch init for AC apps",
   "repository": "https://github.com/mmpro/ac-bootstrap/tree/master/packages/elasticsearch",
   "author": "Mark Poepping <mark.poepping@mmpro.de>",

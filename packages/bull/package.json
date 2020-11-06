@@ -8,9 +8,9 @@
   "dependencies": {
     "ac-redislock": "^1.0.6",
     "async": "^3.1.0",
-    "bull": "^3.13.0",
-    "ioredis": "^4.16.0",
-    "lodash": "^4.17.15"
+    "bull": "^3.18.1",
+    "ioredis": "^4.19.2",
+    "lodash": "^4.17.20"
   },
   "publishConfig": {
     "access": "public"

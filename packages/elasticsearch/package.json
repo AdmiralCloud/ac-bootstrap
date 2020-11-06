@@ -7,9 +7,9 @@
   "license": "MIT",
   "dependencies": {
     "@elastic/elasticsearch": "7",
-    "async": "^3.1.0",
-    "aws-sdk": "^2.663.0",
-    "lodash": "^4.17.15"
+    "async": "^3.2.0",
+    "aws-sdk": "^2.786.0",
+    "lodash": "^4.17.20"
   },
   "publishConfig": {
     "access": "public"

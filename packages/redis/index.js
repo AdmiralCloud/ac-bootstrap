@@ -8,13 +8,10 @@ const _ = require('lodash')
 const Redis = require('ioredis')
 
 module.exports = (acapi, options, cb) => {
-  const headlineLength = _.get(acapi.config, 'headlineLength', 60)
-  const padLength = _.get(acapi.config, 'padLength', 25)
   const bootstrapping = _.get(options, 'bootstrapping', true)
 
-  acapi.log.info('')
-  acapi.log.info(_.pad(' REDIS ', headlineLength, '*'))
-  
+  acapi.aclog.headline({ headline: 'redis' })
+
   // init multiple instances for different purposes
   acapi.redis = {}
   let lastInvoked = 0
@@ -45,10 +42,11 @@ module.exports = (acapi, options, cb) => {
         if (bootstrapping) return itDone(err)
       }
 
-      acapi.log.info('%s: %s', _.padEnd('Name', padLength), name)
-      acapi.log.info('%s: %s %s', _.padEnd('Host/Port', padLength), redisBaseOptions.host, redisBaseOptions.port)
-      acapi.log.info('%s: %s', _.padEnd('DB', padLength), database.db.toString())
-      acapi.log.info('%s: %s', _.padEnd('Connection', padLength), '\x1b[32mSuccessful\x1b[0m')
+      acapi.aclog.listing({ field: 'Name', value: name })
+      acapi.aclog.listing({ field: 'Host/Port', value: `${redisBaseOptions.host} ${redisBaseOptions.port}` })
+      acapi.aclog.listing({ field: 'DB', value: database.db.toString() })
+      acapi.aclog.listing({ field: 'Connection', value: '\x1b[32mSuccessful\x1b[0m' })
+
       if (acapi.config.environment !== 'test') return itDone()
 
       // better debugging in testmode
@@ -63,7 +61,7 @@ module.exports = (acapi, options, cb) => {
       // flush redis in testmode
       if (!_.get(options, 'flushInTestmode')) return itDone()
       acapi.redis[name].flushdb((err) => {
-        acapi.log.info('%s: %s', _.padEnd('Flushed', padLength), '\x1b[32mSuccessful\x1b[0m')
+        acapi.aclog.listing({ field: 'Flushed', value: '\x1b[32mSuccessful\x1b[0m' })
         return itDone(err)
       })
     })

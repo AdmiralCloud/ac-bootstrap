@@ -11,12 +11,9 @@ const AWS = require('aws-sdk')
  **/
 
 module.exports = (acapi, options, cb) => {
-  const headlineLength = _.get(acapi.config, 'headlineLength', 60)
   const providerConfig = _.find(_.get(acapi.config, 'aws.accessKeys'), { default: true, type: _.get(options, 'providerConfigType', 'secrets') })
 
-
-  acapi.log.info('')
-  acapi.log.info(_.pad(' ELASTICSEARCH ', headlineLength, '*'))
+  acapi.aclog.headline({ headline: 'ELASTICSEARCH' })
   
   // init multiple instances for different purposes
   acapi.elasticSearch = {}

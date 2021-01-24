@@ -162,7 +162,7 @@ module.exports = (acapi, options, cb) => {
           if (err) return itDone(err)
 
           acapi.elasticSearch[instance].indices.delete({
-            index: index.index,
+            index: `${index.index}*`,
             ignore_unavailable: true
           }, (err) => {
             if (err) return itDone(err)

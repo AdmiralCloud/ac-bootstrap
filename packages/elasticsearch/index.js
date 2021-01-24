@@ -1,5 +1,6 @@
 const async = require('async')
 const _ = require('lodash') 
+const { v4: uuidv4 } = require('uuid');
 
 const { Client, Connection } = require('@elastic/elasticsearch')
 const AWS = require('aws-sdk')
@@ -166,7 +167,19 @@ module.exports = (acapi, options, cb) => {
           }, (err) => {
             if (err) return itDone(err)
             if (_.isFunction(_.get(options, 'createMapping'))) {
-              _.get(options, 'createMapping')({ index: index.index, model: index.model }, itDone)
+              let uuidIndex = `${index.index}_${uuidv4()}`
+              _.get(options, 'createMapping')({ index: uuidIndex, model: index.model }, err => {
+                if (err) return itDone(err)
+                // create alias
+                let actions = [{
+                  add: { index: uuidIndex, alias: index.index }
+                }]
+                acapi.elasticSearch[instance].indices.updateAliases({
+                  body: {
+                    actions
+                  }
+                }, itDone)
+              })
             }
             else {
               return itDone()

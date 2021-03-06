@@ -8,8 +8,8 @@
   "dependencies": {
     "@elastic/elasticsearch": "7",
     "async": "^3.2.0",
-    "aws-sdk": "^2.786.0",
-    "lodash": "^4.17.20",
+    "aws-sdk": "^2.858.0",
+    "lodash": "^4.17.21",
     "uuid": "^8.3.2"
   },
   "publishConfig": {

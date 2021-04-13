@@ -8,8 +8,8 @@
   "dependencies": {
     "ac-redislock": "^1.0.9",
     "async": "^3.1.0",
-    "bull": "^3.20.1",
-    "ioredis": "^4.23.0",
+    "bull": "^3.22.0",
+    "ioredis": "^4.26.0",
     "lodash": "^4.17.21"
   },
   "publishConfig": {

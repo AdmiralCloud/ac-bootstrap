@@ -6,9 +6,9 @@
   "author": "Mark Poepping",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^7.6.0"
+    "eslint": "^7.24.0"
   },
   "dependencies": {
-    "lerna": "^3.20.2"
+    "lerna": "^4.0.0"
   }
 }

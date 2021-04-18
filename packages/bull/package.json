@@ -1,6 +1,6 @@
 {
   "name": "@mmpro/ac-bootstrap-bull",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Bull helper",
   "repository": "https://github.com/mmpro/ac-bootstrap/tree/master/packages/bull",
   "author": "Mark Poepping <mark.poepping@mmpro.de>",

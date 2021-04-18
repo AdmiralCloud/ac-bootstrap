@@ -120,10 +120,14 @@ module.exports = function(acapi) {
       acapi.log.warn('%s | %s | %s | Job has no identifier %j', functionName, functionIdentifier, queueName, params)    
     }
     const addToWatchList = _.get(acapi.config, 'bull.jobListWatchKey') && _.get(params, 'addToWatchList', true)
-    const watchKeyParts = []
-    if (acapi.config.localDevelopment) watchKeyParts.push(acapi.config.localDevelopment)
-    if (identifierId) watchKeyParts.push(identifierId)
-    const jobListWatchKey = _.get(acapi.config, 'bull.jobListWatchKey') + _.join(watchKeyParts, ':')
+    let jobListWatchKey
+    if (identifierId) {
+      const watchKeyParts = []
+      if (acapi.config.localDevelopment) watchKeyParts.push(acapi.config.localDevelopment)
+      watchKeyParts.push(identifierId)
+      jobListWatchKey = acapi.config.environment + _.get(acapi.config, 'bull.jobListWatchKey') + _.join(watchKeyParts, ':')
+      _.set(jobPayload, 'jobListkWatchKey', jobListWatchKey)
+    }
     
     if (!acapi.bull[queueName]) return cb({ message: 'bullNotAvailableForQueueName', additionalInfo: { queueName } })
     //acapi.log.error('195 %j %j %j %j %j', queueName, name, jobPayload, jobOptions, addToWatchList)
@@ -149,9 +153,8 @@ module.exports = function(acapi) {
         }
       },
       addKeyToWatchList: (done) => {
-        if (!addToWatchList || !_.isObject(acapi.redis[_.get(acapi.config, 'bull.redis.database.name')])) return done()
-        const redisKey = acapi.config.environment + jobListWatchKey
-        acapi.redis[_.get(acapi.config, 'bull.redis.database.name')].hset(redisKey, jobId, queueName, done)
+        if (!addToWatchList || !jobListWatchKey || !_.isObject(acapi.redis[_.get(acapi.config, 'bull.redis.database.name')])) return done()
+        acapi.redis[_.get(acapi.config, 'bull.redis.database.name')].hset(jobListWatchKey, jobId, queueName, done)
       }
     }, (err) => {
       if (_.get(params, 'debug')) acapi.log.info('%s | %s | %s | %s | Adding job to queue', functionName, functionIdentifier, queueName, jobId)
@@ -165,19 +168,12 @@ module.exports = function(acapi) {
       acapi.log.error('%s | %s | %s | Job invalid %j', functionName, functionIdentifier, queueName, job)
     }
     const jobId = _.get(job, 'id')
-    const customerId = _.get(job, 'data.customerId')
+    const jobListWatchKey = _.get(job, 'data.jobListWatchKey')
 
     async.series({
       removeKeyFromWatchList: (done) => {
-        if (!customerId || !_.isObject(acapi.redis[_.get(acapi.config, 'bull.redis.database.name')])) return done()
-        
-        const watchKeyParts = []
-        if (acapi.config.localDevelopment) watchKeyParts.push(acapi.config.localDevelopment)
-        watchKeyParts.push(customerId)
-        const jobListWatchKey = _.get(acapi.config, 'bull.jobListWatchKey') + _.join(watchKeyParts, ':')
-    
-        const redisKey = acapi.config.environment + jobListWatchKey
-        acapi.redis[_.get(acapi.config, 'bull.redis.database.name')].hdel(redisKey, jobId, done)
+        if (!jobListWatchKey || !_.isObject(acapi.redis[_.get(acapi.config, 'bull.redis.database.name')])) return done()        
+        acapi.redis[_.get(acapi.config, 'bull.redis.database.name')].hdel(jobListWatchKey, jobId, done)
       },
       removeJob: (done) => {
         job.remove()

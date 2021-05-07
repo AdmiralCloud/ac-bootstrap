@@ -6,10 +6,10 @@
   "author": "Mark Poepping <mark.poepping@mmpro.de>",
   "license": "MIT",
   "dependencies": {
-    "ac-redislock": "^1.0.9",
-    "async": "^3.1.0",
-    "bull": "^3.22.0",
-    "ioredis": "^4.26.0",
+    "ac-redislock": "^1.0.10",
+    "async": "^3.2.0",
+    "bull": "^3.22.4",
+    "ioredis": "^4.27.2",
     "lodash": "^4.17.21"
   },
   "publishConfig": {

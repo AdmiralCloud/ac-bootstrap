@@ -137,6 +137,7 @@ module.exports = (acapi) => {
           cluster: _.get(esData, 'cluster_name'),
           clusterVersion: _.get(esData, 'version.number')
         })
+        return itDone()
       })
     }, cb)
   }

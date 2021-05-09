@@ -42,7 +42,11 @@ module.exports = function(acapi) {
     let redisConf = {
       host: _.get(redisServer, 'host', 'localhost'),
       port,
-      db: _.get(redisConfig, 'db', 3)
+      db: _.get(redisConfig, 'db', 3),
+      retryStrategy: (times) => {
+        const delay = Math.min(times * 1000, 300000)
+        return delay
+      }
     }
 
     acapi.aclog.serverInfo(redisConf)

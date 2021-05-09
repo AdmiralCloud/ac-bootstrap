@@ -8,11 +8,12 @@
   "dependencies": {
     "@elastic/elasticsearch": "7",
     "async": "^3.2.0",
-    "aws-sdk": "^2.858.0",
+    "aws-sdk": "^2.903.0",
     "lodash": "^4.17.21",
     "uuid": "^8.3.2"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "ca4628b0aecf0a15ee539fae2345c02dfe1d8aa6"
 }

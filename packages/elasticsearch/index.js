@@ -178,7 +178,7 @@ module.exports = (acapi) => {
           if (_.isFunction(_.get(params, 'createMapping'))) {
             let uuidIndex = `${index.index}_${uuidv4()}`
             _.get(params, 'createMapping')({ index: uuidIndex, model: index.model }, err => {
-              if (err) return itDone(err)
+              if (err) return cb(err)
               // create alias
               let actions = [{
                 add: { index: uuidIndex, alias: index.index }

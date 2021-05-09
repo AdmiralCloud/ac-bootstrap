@@ -26,12 +26,13 @@ module.exports = (acapi, options, cb) => {
       port: acapi.config.localRedis ? 6379 : _.get(server, 'port'),
       db: _.get(database, 'db')
     }
-    if (_.get(acapi.config, 'redis.retryStrategy')) _.set(redisBaseOptions, 'retry_strategy', _.get(acapi.config, 'redis.retryStrategy'))
+    if (_.get(acapi.config, 'redis.retryStrategy')) _.set(redisBaseOptions, 'retryStrategy', _.get(acapi.config, 'redis.retryStrategy'))
+
     acapi.redis[name] = new Redis(redisBaseOptions)
 
     acapi.redis[name].on('error', (err) => {
       if (lastInvoked === 0 || lastInvoked < new Date().getTime()) {
-        acapi.log.error('REDIS Problem for %s - %s', name, err)
+        acapi.log.error('REDIS | Problem | %s | %s', name, _.get(err, 'message'))
         lastInvoked = new Date().getTime() + _.get(acapi.config, 'redis.errorInterval', 5000) // 5000 = interval in ms
       }
     })
@@ -47,15 +48,15 @@ module.exports = (acapi, options, cb) => {
       acapi.aclog.listing({ field: 'DB', value: database.db.toString() })
       acapi.aclog.listing({ field: 'Connection', value: '\x1b[32mSuccessful\x1b[0m' })
 
+      acapi.redis[name].on('connect', () => {
+        acapi.log.info('REDIS | Connected | %s', name)
+      })
+
       if (acapi.config.environment !== 'test') return itDone()
 
       // better debugging in testmode
-      acapi.redis[name].on('connect', () => {
-        acapi.log.debug('Connected to Redis %s', name)
-      })
-
-      acapi.redis[name].on('close', () => {
-        acapi.log.debug('Closed connected to Redis %s', name)
+      acapi.redis[name].once('close', () => {
+        acapi.log.debug('REDIS | Connection closed | %s', name)
       })
 
       // flush redis in testmode

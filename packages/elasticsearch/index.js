@@ -170,6 +170,7 @@ module.exports = (acapi) => {
       }, (err) => {
         if (err) return cb(err)
 
+        acapi.log.info('Bootstrap | ES | prepareForTest | Deleting index | %s', `${index.index}*`)            
         acapi.elasticSearch[instance].indices.delete({
           index: `${index.index}*`,
           ignore_unavailable: true
@@ -177,12 +178,14 @@ module.exports = (acapi) => {
           if (err) return cb(err)
           if (_.isFunction(_.get(params, 'createMapping'))) {
             let uuidIndex = `${index.index}_${uuidv4()}`
+            acapi.log.info('Bootstrap | ES | prepareForTest | Create index | Model %s | %s', `${index.model}`, uuidIndex)            
             _.get(params, 'createMapping')({ index: uuidIndex, model: index.model }, err => {
               if (err) return cb(err)
               // create alias
               let actions = [{
                 add: { index: uuidIndex, alias: index.index }
               }]
+              acapi.log.info('Bootstrap | ES | prepareForTest | Create alias | %j', actions)            
               acapi.elasticSearch[instance].indices.updateAliases({
                 body: {
                   actions

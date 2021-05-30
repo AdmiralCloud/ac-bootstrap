@@ -27,6 +27,8 @@ module.exports = (acapi, options, cb) => {
       db: _.get(database, 'db')
     }
     if (_.get(acapi.config, 'redis.retryStrategy')) _.set(redisBaseOptions, 'retryStrategy', _.get(acapi.config, 'redis.retryStrategy'))
+    if (_.get(acapi.config, 'redis.timeout')) _.set(redisBaseOptions, 'connectTimeout', _.get(acapi.config, 'redis.timeout'))
+    if (_.get(acapi.config, 'redis.connectTimeout')) _.set(redisBaseOptions, 'connectTimeout', _.get(acapi.config, 'redis.connectTimeout'))
 
     acapi.redis[name] = new Redis(redisBaseOptions)
 
@@ -48,13 +50,21 @@ module.exports = (acapi, options, cb) => {
       acapi.aclog.listing({ field: 'DB', value: database.db.toString() })
       acapi.aclog.listing({ field: 'Connection', value: '\x1b[32mSuccessful\x1b[0m' })
 
-      acapi.redis[name].on('connect', () => {
-        acapi.log.info('REDIS | Connected | %s', name)
+      acapi.redis[name].on('ready', () => {
+        acapi.log.info('REDIS | Ready | %s', name)
       })
 
       if (acapi.config.environment !== 'test') return itDone()
 
       // better debugging in testmode
+      acapi.redis[name].on('connect', () => {
+        acapi.log.debug('REDIS | Connected | %s', name)
+      })
+
+      acapi.redis[name].on('reconnecting', (ms) => {
+        acapi.log.debug('REDIS | Reconnecting | %s | %s', name, ms)
+      })
+
       acapi.redis[name].once('close', () => {
         acapi.log.debug('REDIS | Connection closed | %s', name)
       })

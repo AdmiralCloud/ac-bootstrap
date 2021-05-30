@@ -24,10 +24,10 @@ denque@^1.1.0:
   resolved "https://registry.yarnpkg.com/denque/-/denque-1.4.1.tgz#6744ff7641c148c3f8a69c307e51235c1f4a37cf"
   integrity sha512-OfzPuSZKGcgr96rf1oODnfjqBFmr1DVoc/TrItj3Ohe0Ah1C5WX5Baquw/9U9KovnQ88EqmJbD66rKYUQYN1tQ==
 
-ioredis@^4.27.2:
-  version "4.27.2"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.2.tgz#6a79bca05164482da796f8fa010bccefd3bf4811"
-  integrity sha512-7OpYymIthonkC2Jne5uGWXswdhlua1S1rWGAERaotn0hGJWTSURvxdHA9G6wNbT/qKCloCja/FHsfKXW8lpTmg==
+ioredis@^4.27.3:
+  version "4.27.3"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.3.tgz#4a020c9056bf4e016c476910fb59620a0d899654"
+  integrity sha512-eAirtUIljFkHJwuKQhbGajVrdCUMNKRuOrhzRFeYZRvXnLs4757Oss1S8aiheB4NSO1RsLeG+2RUjY/0/XiSig==
   dependencies:
     cluster-key-slot "^1.1.0"
     debug "^4.3.1"

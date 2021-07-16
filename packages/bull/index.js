@@ -130,7 +130,7 @@ module.exports = function(acapi) {
       if (acapi.config.localDevelopment) watchKeyParts.push(acapi.config.localDevelopment)
       watchKeyParts.push(identifierId)
       jobListWatchKey = acapi.config.environment + _.get(acapi.config, 'bull.jobListWatchKey') + _.join(watchKeyParts, ':')
-      _.set(jobPayload, 'jobListkWatchKey', jobListWatchKey)
+      _.set(jobPayload, 'jobListWatchKey', jobListWatchKey)
     }
     
     if (!acapi.bull[queueName]) return cb({ message: 'bullNotAvailableForQueueName', additionalInfo: { queueName } })
